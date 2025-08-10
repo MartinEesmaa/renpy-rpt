@@ -66,6 +66,17 @@ def extract_dialogues(rpy_path, single_re, multi_re):
 
     return dialogues
 
+def extract_screen_texts(screens_path):
+    """
+    Extracts all label and textbutton texts wrapped in _() from screens.rpy.
+    Returns a list of strings.
+    """
+    with open(screens_path, encoding="utf-8") as f:
+        content = f.read()
+    # Match label _("...") and textbutton _("...") with double quotes
+    pattern = re.compile(r'(label|textbutton)\s+_\("([^"]+)"\)')
+    return [m.group(2) for m in pattern.finditer(content)]
+
 def main():
     parser = argparse.ArgumentParser(
         description="""Generate a Ren’Py .rpt translation template from dialogues used before 6.15.
@@ -94,6 +105,34 @@ def main():
     rpy_files = glob(pattern, recursive=True)
     if not rpy_files:
         sys.exit("Error: No .rpy files found under '{}'.".format(args.input_dir))
+
+    # Check for screens.rpy first
+    screens_path = os.path.join(args.input_dir, "screens.rpy")
+    if os.path.isfile(screens_path):
+        print("Processing label & button texts from screens.rpy...")
+        label_texts = extract_screen_texts(screens_path)
+        with open(args.output_file, "w", encoding="utf-8", newline="\n") as fout:
+            # Write screens.rpy texts
+            if not label_texts:
+                print("Warning: No label or button texts are found in screens.rpy.")
+            else:
+                for orig in label_texts:
+                    q_orig  = quote(orig)
+                    q_trans = quote(orig) if args.fill_template else ""
+                    fout.write(f"< {q_orig}\n")
+                    fout.write(f"> {q_trans}\n\n")
+                print(f"Extracted {len(label_texts)} texts → {args.output_file}")
+            # Add empty slots from Load screen
+            for i in range(1, 10):
+                fout.write(f"< {i}. Empty Slot.\n")
+                fout.write(f"> \n\n")
+            # Add quit confirm message for exit window during in the game or menus.
+            fout.write(f"< Are you sure you want to quit?\n")
+            fout.write(f"> \n\n")
+    else:
+        print("Warning: screens.rpy not found, moving to script.rpy and other files.")
+        # If screens.rpy is missing, still create/clear the output file
+        open(args.output_file, "w", encoding="utf-8").close()
 
     # 2. Read script.rpy
     script_path = os.path.join(args.input_dir, "script.rpy")
@@ -125,7 +164,8 @@ def main():
         sys.exit("Error: No dialogue lines are found from .rpy files.")
 
     # 7. Write .rpt
-    with open(args.output_file, "w", encoding="utf-8", newline="\n") as fout:
+    # Append script dialogues after screens.rpy and extra lines
+    with open(args.output_file, "a", encoding="utf-8", newline="\n") as fout:
         for orig in unique_texts:
             q_orig  = quote(orig)
             q_trans = quote(orig) if args.fill_template else ""
