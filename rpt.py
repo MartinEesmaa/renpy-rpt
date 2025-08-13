@@ -149,6 +149,15 @@ def main():
                 "Hide Text - Not Assigned",
                 "Menu - Button 0.7",
                 "Joystick Mapping - Left",
+                "Joystick Mapping - Right",
+                "Joystick Mapping - Up",
+                "Joystick Mapping - Down",
+                "Joystick Mapping - Select/Dismiss",
+                "Joystick Mapping - Rollback",
+                "Joystick Mapping - Hold to Skip",
+                "Joystick Mapping - Toggle Skip",
+                "Joystick Mapping - Hide Text",
+                "Joystick Mapping - Menu",
                 "Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping."
             ]
             for orig in joystick_lines:
