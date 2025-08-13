@@ -124,11 +124,38 @@ def main():
                 print(f"Extracted {len(label_texts)} texts → {args.output_file}")
             # Add empty slots from Load screen
             for i in range(1, 10):
-                fout.write(f"< {i}. Empty Slot.\n")
-                fout.write(f"> \n\n")
+                orig = f"{i}. Empty Slot."
+                q_orig  = quote(orig)
+                q_trans = quote(orig) if args.fill_template else ""
+                fout.write(f"< {q_orig}\n")
+                fout.write(f"> {q_trans}\n\n")
             # Add quit confirm message for exit window during in the game or menus.
-            fout.write(f"< Are you sure you want to quit?\n")
-            fout.write(f"> \n\n")
+            orig = "Are you sure you want to quit?"
+            q_orig  = quote(orig)
+            q_trans = quote(orig) if args.fill_template else ""
+            fout.write(f"< {q_orig}\n")
+            fout.write(f"> {q_trans}\n\n")
+            # Add joystick configuration section
+            joystick_lines = [
+                "Joystick Configuration",
+                "Left - Axis 0.0 Negative",
+                "Right - Axis 0.0 Positive",
+                "Up - Axis 0.1 Negative",
+                "Down - Axis 0.1 Positive",
+                "Select/Dismiss - Button 0.0",
+                "Rollback - Not Assigned",
+                "Hold to Skip - Not Assigned",
+                "Toggle Skip - Not Assigned",
+                "Hide Text - Not Assigned",
+                "Menu - Button 0.7",
+                "Joystick Mapping - Left",
+                "Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping."
+            ]
+            for orig in joystick_lines:
+                q_orig  = quote(orig)
+                q_trans = quote(orig) if args.fill_template else ""
+                fout.write(f"< {q_orig}\n")
+                fout.write(f"> {q_trans}\n\n")
     else:
         print("Warning: screens.rpy not found, moving to script.rpy and other files.")
         # If screens.rpy is missing, still create/clear the output file
