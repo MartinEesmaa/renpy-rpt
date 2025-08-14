@@ -162,7 +162,7 @@ def main():
                 print(f"Extracted {len(label_texts)} texts → {args.output_file}")
             # Add empty slots from Load screen
             for i in range(1, 10):
-                orig = f"{i}. Empty Slot."
+                orig = f" {i}. Empty Slot."
                 q_orig  = quote(orig)
                 q_trans = quote(orig) if args.fill_template else ""
                 fout.write(f"< {q_orig}\n")
