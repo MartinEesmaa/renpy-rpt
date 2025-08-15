@@ -92,16 +92,16 @@ def deduplicate_rpt(filepath):
             src = lines[i][2:].rstrip()
             if src not in seen:
                 seen.add(src)
-                output_lines.append(lines[i])
+                output_lines.append(lines[i].replace('\n', '\r\n'))  # Ensure set CRLF default
                 # Expect the next line to be the translation line
                 if i + 1 < len(lines) and lines[i+1].startswith(">"):
-                    output_lines.append(lines[i+1])
+                    output_lines.append(lines[i+1].replace('\n', '\r\n'))
                     i += 2
                 else:
                     i += 1
                 # Add any blank lines after
                 while i < len(lines) and lines[i].strip() == "":
-                    output_lines.append(lines[i])
+                    output_lines.append(lines[i].replace('\n', '\r\n'))
                     i += 1
             else:
                 # Skip this block (source + translation + blank lines)
@@ -109,10 +109,10 @@ def deduplicate_rpt(filepath):
                 while i < len(lines) and (lines[i].startswith(">") or lines[i].strip() == ""):
                     i += 1
         else:
-            output_lines.append(lines[i])
+            output_lines.append(lines[i].replace('\n', '\r\n'))
             i += 1
 
-    with open(filepath, "w", encoding="utf-8", newline="\n") as fout:
+    with open(filepath, "w", encoding="utf-8", newline="") as fout:
         fout.writelines(output_lines)
 
 def main():
@@ -239,12 +239,12 @@ def main():
 
     # 7. Write .rpt
     # Append script dialogues after screens.rpy and extra lines
-    with open(args.output_file, "a", encoding="utf-8", newline="\n") as fout:
+    with open(args.output_file, "a", encoding="utf-8", newline="") as fout:
         for orig in unique_texts:
             q_orig  = quote(orig)
             q_trans = quote(orig) if args.fill_template else ""
-            fout.write(f"< {q_orig}\n")
-            fout.write(f"> {q_trans}\n\n")
+            fout.write(f"< {q_orig}\r\n")
+            fout.write(f"> {q_trans}\r\n\r\n")
 
     # Deduplicate the .rpt file after writing everything
     deduplicate_rpt(args.output_file)
