@@ -50,7 +50,7 @@ def build_patterns(char_names):
 
 def extract_dialogues(rpy_path, single_re, multi_re):
     """
-    Extract raw dialogue strings from one .rpy file using the given regexes.
+    Extract raw dialogue strings and menu choices from one .rpy file using the given regexes.
     """
     content = open(rpy_path, encoding="utf-8").read()
     dialogues = []
@@ -63,6 +63,11 @@ def extract_dialogues(rpy_path, single_re, multi_re):
         raw = m.group("text")
         lines = [ln.rstrip() for ln in raw.splitlines()]
         dialogues.append("\n".join(lines).strip())
+
+    menu_choice_re = re.compile(r'^\s*"([^"]+)"\s*:', re.MULTILINE)
+    for m in menu_choice_re.finditer(content):
+        choice = m.group(1).strip()
+        dialogues.append(choice)
 
     return dialogues
 
