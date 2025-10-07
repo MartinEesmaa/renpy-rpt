@@ -172,14 +172,11 @@ def main():
                 q_trans = quote(orig) if args.fill_template else ""
                 fout.write(f"< {q_orig}\n")
                 fout.write(f"> {q_trans}\n\n")
-            # Add quit confirm message for exit window during in the game or menus.
-            orig = "Are you sure you want to quit?"
-            q_orig  = quote(orig)
-            q_trans = quote(orig) if args.fill_template else ""
-            fout.write(f"< {q_orig}\n")
-            fout.write(f"> {q_trans}\n\n")
-            # Add joystick configuration section
-            joystick_lines = [
+            # Add confirmations & joystick configuration texts
+            system_lines = [
+                "Are you sure you want to quit?",
+                "Loading will lose unsaved progress.\nAre you sure you want to do this?",
+                "Are you sure you want to overwrite your save?",
                 "Joystick Configuration",
                 "Left - Axis 0.0 Negative",
                 "Right - Axis 0.0 Positive",
@@ -203,7 +200,7 @@ def main():
                 "Joystick Mapping - Menu",
                 "Move the joystick or press a joystick button to create the mapping. Click the mouse to remove the mapping."
             ]
-            for orig in joystick_lines:
+            for orig in system_lines:
                 q_orig  = quote(orig)
                 q_trans = quote(orig) if args.fill_template else ""
                 fout.write(f"< {q_orig}\n")
